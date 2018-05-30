@@ -1,0 +1,1004 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>iterable_collections.factory &mdash; iterable_collections 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="iterable_collections 0.0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> iterable_collections
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">iterable_collections</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>iterable_collections.factory</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for iterable_collections.factory</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">import</span> <span class="nn">builtins</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterator</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="kn">from</span> <span class="nn">iterable_collections</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">iterable_collections.strategy</span> <span class="k">import</span> <span class="n">MethodStrategy</span><span class="p">,</span> <span class="n">StoreResultStrategy</span><span class="p">,</span> <span class="n">ReturnInstanceStrategy</span><span class="p">,</span> \
+    <span class="n">PartialAtPositionIterableBindingStrategy</span><span class="p">,</span> <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">,</span> <span class="n">PreProcessingStrategy</span><span class="p">,</span> \
+    <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">,</span> <span class="n">StoreIterableStrategy</span><span class="p">,</span> <span class="n">ReturnResultStrategy</span><span class="p">,</span> <span class="n">PartialIterableBindingStrategy</span><span class="p">,</span> \
+    <span class="n">ConcatMethodStrategy</span><span class="p">,</span> <span class="n">ConvertToDictErrorHandlingStrategy</span><span class="p">,</span> <span class="n">DiffMethodStrategy</span><span class="p">,</span> \
+    <span class="n">ConvertToSetArgumentFormattingStrategy</span><span class="p">,</span> <span class="n">ConvertDictItemsToSetArgumentFormattingStrategy</span><span class="p">,</span> \
+    <span class="n">ConvertToDictArgumentFormattingStrategy</span><span class="p">,</span> <span class="n">ConvertToIterArgumentFormattingStrategy</span><span class="p">,</span> \
+    <span class="n">ConvertToListArgumentFormattingStrategy</span><span class="p">,</span> <span class="n">SpreadTupleParameterArgumentFormattingStrategy</span><span class="p">,</span> \
+    <span class="n">RightPartialIterableBindingStrategy</span><span class="p">,</span> <span class="n">GetItemErrorHandlingStrategy</span><span class="p">,</span> <span class="n">FlattenMethodStrategy</span><span class="p">,</span> <span class="n">IntersectMethodStrategy</span><span class="p">,</span> \
+    <span class="n">SetItemErrorHandlingStrategy</span><span class="p">,</span> <span class="n">SortedAndGroupbyMethodStrategy</span><span class="p">,</span> <span class="n">PartialInstanceBindingStrategy</span><span class="p">,</span> <span class="n">ChunksMethodStrategy</span>
+
+
+<div class="viewcode-block" id="MethodStrategyFactoryInterface"><a class="viewcode-back" href="../../index.html#iterable_collections.factory.MethodStrategyFactoryInterface">[docs]</a><span class="k">class</span> <span class="nc">MethodStrategyFactoryInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="DefaultMethodStrategyFactory"><a class="viewcode-back" href="../../index.html#iterable_collections.factory.DefaultMethodStrategyFactory">[docs]</a><span class="k">class</span> <span class="nc">DefaultMethodStrategyFactory</span><span class="p">(</span><span class="n">MethodStrategyFactoryInterface</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_strategies</span><span class="p">()}</span>
+
+    <span class="k">def</span> <span class="nf">get_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;all&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">all</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;any&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">any</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">ChunksMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;chunks&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialInstanceBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">ChunksMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;chunks_dict&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;list_&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">ChunksMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;chunks_iter&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;list_&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">ChunksMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;chunks_seq&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;list_&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">ConcatMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;concat&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialInstanceBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">ConcatMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;concat_dict&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToDictArgumentFormattingStrategy</span><span class="p">(</span>
+                    <span class="n">ConvertToDictErrorHandlingStrategy</span><span class="p">()</span>
+                <span class="p">),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">ConcatMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;concat_iter&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToIterArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;iter&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">ConcatMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;concat_seq&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToListArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;contains&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">contains</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;dict&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToDictErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;dict_&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToDictErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">DiffMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;diff&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialInstanceBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;diff_dict&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertDictItemsToSetArgumentFormattingStrategy</span><span class="p">(</span>
+                    <span class="n">ConvertToDictArgumentFormattingStrategy</span><span class="p">(</span>
+                        <span class="n">ConvertToDictErrorHandlingStrategy</span><span class="p">()</span>
+                    <span class="p">)</span>
+                <span class="p">),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+                <span class="p">)),</span>
+                <span class="n">ConvertToDictErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;diff_iter&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToSetArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;diff_seq&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToSetArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;emap&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">map</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialAtPositionIterableBindingStrategy</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">SpreadTupleParameterArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;enumerate&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;enumerate&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">enumerate</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;empty&#39;</span><span class="p">,</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">)</span> <span class="k">else</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="kc">True</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">x</span><span class="p">),</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;filter&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">RightPartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;filter_items&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">RightPartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">SpreadTupleParameterArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;filter_nt_items&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">RightPartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;nt_items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;first&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">GetItemErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;first_item&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;tuple&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+                <span class="p">)),</span>
+                <span class="n">GetItemErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;first_nt_item&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;nt_items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">GetItemErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">FlattenMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;flatten&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;getitem&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">getitem</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">GetItemErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;groupby&#39;</span><span class="p">,</span>
+                <span class="n">itertools</span><span class="o">.</span><span class="n">groupby</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">IntersectMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;intersect&#39;</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialInstanceBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;intersect_dict&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertDictItemsToSetArgumentFormattingStrategy</span><span class="p">(</span>
+                    <span class="n">ConvertToDictArgumentFormattingStrategy</span><span class="p">(</span>
+                        <span class="n">ConvertToDictErrorHandlingStrategy</span><span class="p">()</span>
+                    <span class="p">)</span>
+                <span class="p">),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;intersect_iter&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToSetArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;intersect_seq&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">and_</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToSetArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;islice&#39;</span><span class="p">,</span>
+                <span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;items&#39;</span><span class="p">,</span>
+                <span class="nb">dict</span><span class="o">.</span><span class="n">items</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;iter&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;iter_&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;join&#39;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="o">.</span><span class="n">join</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">RightPartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;last&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;last_item&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;list_&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;last_nt_item&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;nt_items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;len&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">len</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;list&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">list</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;list_&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">list</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;map&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">map</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialAtPositionIterableBindingStrategy</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;map_items&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">map</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialAtPositionIterableBindingStrategy</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">SpreadTupleParameterArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;map_nt_items&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">map</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialAtPositionIterableBindingStrategy</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;nt_items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;max&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">max</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;min&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">min</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;next&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">next</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;iter_&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;nt_items&#39;</span><span class="p">,</span>
+                <span class="n">utils</span><span class="o">.</span><span class="n">make_nt_items</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;ordered_dict&#39;</span><span class="p">,</span>
+                <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToDictErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;ordered_dict_&#39;</span><span class="p">,</span>
+                <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">ConvertToDictErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;pop&#39;</span><span class="p">,</span>
+                <span class="nb">list</span><span class="o">.</span><span class="n">pop</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;reduce&#39;</span><span class="p">,</span>
+                <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialAtPositionIterableBindingStrategy</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;reduce_items&#39;</span><span class="p">,</span>
+                <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialAtPositionIterableBindingStrategy</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">SpreadTupleParameterArgumentFormattingStrategy</span><span class="p">(</span><span class="n">callable_position</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;reduce_nt_items&#39;</span><span class="p">,</span>
+                <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialAtPositionIterableBindingStrategy</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;nt_items&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;reversed&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">reversed</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;set&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">set</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;set_&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">set</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;setitem&#39;</span><span class="p">,</span>
+                <span class="n">operator</span><span class="o">.</span><span class="n">setitem</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">SetItemErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;slice&#39;</span><span class="p">,</span>
+                <span class="k">lambda</span> <span class="n">d</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="n">operator</span><span class="o">.</span><span class="n">getitem</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)),</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">((</span>
+                    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">(),</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;store&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+                <span class="p">)),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;sorted&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">sorted</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">SortedAndGroupbyMethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;sorted_and_groupby&#39;</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialInstanceBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;tuple&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">tuple</span><span class="p">,</span>
+                <span class="n">StoreIterableStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnResultStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;tuple_&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">tuple</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;unique&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">set</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">),</span>
+            <span class="n">MethodStrategy</span><span class="p">(</span>
+                <span class="s1">&#39;zip&#39;</span><span class="p">,</span>
+                <span class="n">builtins</span><span class="o">.</span><span class="n">zip</span><span class="p">,</span>
+                <span class="n">StoreResultStrategy</span><span class="p">(),</span>
+                <span class="n">ReturnInstanceStrategy</span><span class="p">(),</span>
+                <span class="n">PartialIterableBindingStrategy</span><span class="p">(),</span>
+                <span class="n">UnformattedArgumentFormattingStrategy</span><span class="p">(),</span>
+                <span class="n">PreProcessingStrategy</span><span class="p">(),</span>
+                <span class="n">BaseExceptionErrorHandlingStrategy</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Allie Fitter.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

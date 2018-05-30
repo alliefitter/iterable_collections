@@ -1,0 +1,706 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>iterable_collections.strategy &mdash; iterable_collections 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="iterable_collections 0.0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> iterable_collections
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">iterable_collections</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>iterable_collections.strategy</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for iterable_collections.strategy</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="k">import</span> <span class="n">Iterable</span><span class="p">,</span>  <span class="n">Mapping</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MappingView</span><span class="p">,</span> <span class="n">Iterator</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">from</span> <span class="nn">iterable_collections.utils</span> <span class="k">import</span> <span class="n">rpartial</span><span class="p">,</span> <span class="n">partial_at_position</span><span class="p">,</span> <span class="n">safe_call</span>
+
+
+<div class="viewcode-block" id="MethodStrategyInterface"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.MethodStrategyInterface">[docs]</a><span class="k">class</span> <span class="nc">MethodStrategyInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="MethodStrategyInterface.make_method"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.MethodStrategyInterface.make_method">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">make_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="ResultStrategyInterface"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ResultStrategyInterface">[docs]</a><span class="k">class</span> <span class="nc">ResultStrategyInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="ResultStrategyInterface.handle_result"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ResultStrategyInterface.handle_result">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">handle_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="ReturnValueStrategyInterface"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ReturnValueStrategyInterface">[docs]</a><span class="k">class</span> <span class="nc">ReturnValueStrategyInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="ReturnValueStrategyInterface.return_value"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ReturnValueStrategyInterface.return_value">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">return_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">ret</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="PreProcessingStrategyInterface"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PreProcessingStrategyInterface">[docs]</a><span class="k">class</span> <span class="nc">PreProcessingStrategyInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="PreProcessingStrategyInterface.pre_process"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PreProcessingStrategyInterface.pre_process">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">pre_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="ArgumentFormattingStrategyInterface"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ArgumentFormattingStrategyInterface">[docs]</a><span class="k">class</span> <span class="nc">ArgumentFormattingStrategyInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentFormattingStrategyInterface.format"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ArgumentFormattingStrategyInterface.format">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="ArgumentBindingStrategyInterface"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ArgumentBindingStrategyInterface">[docs]</a><span class="k">class</span> <span class="nc">ArgumentBindingStrategyInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentBindingStrategyInterface.bind"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ArgumentBindingStrategyInterface.bind">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="ErrorHandlingStrategyInterface"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ErrorHandlingStrategyInterface">[docs]</a><span class="k">class</span> <span class="nc">ErrorHandlingStrategyInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="ErrorHandlingStrategyInterface.get_error"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ErrorHandlingStrategyInterface.get_error">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ErrorHandlingStrategyInterface.handle"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ErrorHandlingStrategyInterface.handle">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+<div class="viewcode-block" id="BaseExceptionErrorHandlingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.BaseExceptionErrorHandlingStrategy">[docs]</a><span class="k">class</span> <span class="nc">BaseExceptionErrorHandlingStrategy</span><span class="p">(</span><span class="n">ErrorHandlingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseExceptionErrorHandlingStrategy.get_error"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.BaseExceptionErrorHandlingStrategy.get_error">[docs]</a>    <span class="k">def</span> <span class="nf">get_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ne">BaseException</span></div>
+
+<div class="viewcode-block" id="BaseExceptionErrorHandlingStrategy.handle"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.BaseExceptionErrorHandlingStrategy.handle">[docs]</a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">error</span></div></div>
+
+
+<div class="viewcode-block" id="ConvertToDictErrorHandlingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToDictErrorHandlingStrategy">[docs]</a><span class="k">class</span> <span class="nc">ConvertToDictErrorHandlingStrategy</span><span class="p">(</span><span class="n">ErrorHandlingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="ConvertToDictErrorHandlingStrategy.get_error"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToDictErrorHandlingStrategy.get_error">[docs]</a>    <span class="k">def</span> <span class="nf">get_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span></div>
+
+<div class="viewcode-block" id="ConvertToDictErrorHandlingStrategy.handle"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToDictErrorHandlingStrategy.handle">[docs]</a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid iterable structure to for type dict&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GetItemErrorHandlingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.GetItemErrorHandlingStrategy">[docs]</a><span class="k">class</span> <span class="nc">GetItemErrorHandlingStrategy</span><span class="p">(</span><span class="n">ErrorHandlingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="GetItemErrorHandlingStrategy.get_error"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.GetItemErrorHandlingStrategy.get_error">[docs]</a>    <span class="k">def</span> <span class="nf">get_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">IndexError</span></div>
+
+<div class="viewcode-block" id="GetItemErrorHandlingStrategy.handle"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.GetItemErrorHandlingStrategy.handle">[docs]</a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;iterable contains no key, 0.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;iterable is not of a subscriptable type.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Index 0 is not set on iterable.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">error</span></div></div>
+
+
+<div class="viewcode-block" id="SetItemErrorHandlingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.SetItemErrorHandlingStrategy">[docs]</a><span class="k">class</span> <span class="nc">SetItemErrorHandlingStrategy</span><span class="p">(</span><span class="n">ErrorHandlingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="SetItemErrorHandlingStrategy.get_error"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.SetItemErrorHandlingStrategy.get_error">[docs]</a>    <span class="k">def</span> <span class="nf">get_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ne">TypeError</span></div>
+
+<div class="viewcode-block" id="SetItemErrorHandlingStrategy.handle"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.SetItemErrorHandlingStrategy.handle">[docs]</a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;iterable is not of a subscriptable type.&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="StoreResultStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.StoreResultStrategy">[docs]</a><span class="k">class</span> <span class="nc">StoreResultStrategy</span><span class="p">(</span><span class="n">ResultStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="StoreResultStrategy.handle_result"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.StoreResultStrategy.handle_result">[docs]</a>    <span class="k">def</span> <span class="nf">handle_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">store</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">iterable</span></div></div>
+
+
+<div class="viewcode-block" id="StoreIterableStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.StoreIterableStrategy">[docs]</a><span class="k">class</span> <span class="nc">StoreIterableStrategy</span><span class="p">(</span><span class="n">ResultStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="StoreIterableStrategy.handle_result"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.StoreIterableStrategy.handle_result">[docs]</a>    <span class="k">def</span> <span class="nf">handle_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">store</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">iterable</span>
+        <span class="k">return</span> <span class="n">result</span></div></div>
+
+
+<div class="viewcode-block" id="ReturnInstanceStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ReturnInstanceStrategy">[docs]</a><span class="k">class</span> <span class="nc">ReturnInstanceStrategy</span><span class="p">(</span><span class="n">ReturnValueStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="ReturnInstanceStrategy.return_value"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ReturnInstanceStrategy.return_value">[docs]</a>    <span class="k">def</span> <span class="nf">return_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">ret</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">instance</span>
+        <span class="k">return</span> <span class="n">result</span></div></div>
+
+
+<div class="viewcode-block" id="ReturnResultStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ReturnResultStrategy">[docs]</a><span class="k">class</span> <span class="nc">ReturnResultStrategy</span><span class="p">(</span><span class="n">ReturnValueStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="ReturnResultStrategy.return_value"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ReturnResultStrategy.return_value">[docs]</a>    <span class="k">def</span> <span class="nf">return_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">ret</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">instance</span></div></div>
+
+
+<div class="viewcode-block" id="PartialIterableBindingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PartialIterableBindingStrategy">[docs]</a><span class="k">class</span> <span class="nc">PartialIterableBindingStrategy</span><span class="p">(</span><span class="n">ArgumentBindingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="PartialIterableBindingStrategy.bind"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PartialIterableBindingStrategy.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">iterable</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="PartialInstanceBindingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PartialInstanceBindingStrategy">[docs]</a><span class="k">class</span> <span class="nc">PartialInstanceBindingStrategy</span><span class="p">(</span><span class="n">ArgumentBindingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="PartialInstanceBindingStrategy.bind"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PartialInstanceBindingStrategy.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="RightPartialIterableBindingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.RightPartialIterableBindingStrategy">[docs]</a><span class="k">class</span> <span class="nc">RightPartialIterableBindingStrategy</span><span class="p">(</span><span class="n">ArgumentBindingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="RightPartialIterableBindingStrategy.bind"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.RightPartialIterableBindingStrategy.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rpartial</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">iterable</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="PartialAtPositionIterableBindingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PartialAtPositionIterableBindingStrategy">[docs]</a><span class="k">class</span> <span class="nc">PartialAtPositionIterableBindingStrategy</span><span class="p">(</span><span class="n">ArgumentBindingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="PartialAtPositionIterableBindingStrategy.__init__"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PartialAtPositionIterableBindingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span></div>
+
+<div class="viewcode-block" id="PartialAtPositionIterableBindingStrategy.bind"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PartialAtPositionIterableBindingStrategy.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">partial_at_position</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">iterable</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="PreProcessingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PreProcessingStrategy">[docs]</a><span class="k">class</span> <span class="nc">PreProcessingStrategy</span><span class="p">(</span><span class="n">PreProcessingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="PreProcessingStrategy.__init__"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PreProcessingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operations</span><span class="o">=</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operations</span> <span class="o">=</span> <span class="n">operations</span></div>
+
+<div class="viewcode-block" id="PreProcessingStrategy.pre_process"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.PreProcessingStrategy.pre_process">[docs]</a>    <span class="k">def</span> <span class="nf">pre_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">operation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))(</span><span class="o">*</span><span class="n">operation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="p">()),</span> <span class="o">**</span><span class="n">operation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;kwargs&#39;</span><span class="p">,</span> <span class="p">{}))</span></div></div>
+
+
+<div class="viewcode-block" id="UnformattedArgumentFormattingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.UnformattedArgumentFormattingStrategy">[docs]</a><span class="k">class</span> <span class="nc">UnformattedArgumentFormattingStrategy</span><span class="p">(</span><span class="n">ArgumentFormattingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="UnformattedArgumentFormattingStrategy.format"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.UnformattedArgumentFormattingStrategy.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span></div></div>
+
+
+<div class="viewcode-block" id="ConvertToDictArgumentFormattingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToDictArgumentFormattingStrategy">[docs]</a><span class="k">class</span> <span class="nc">ConvertToDictArgumentFormattingStrategy</span><span class="p">(</span><span class="n">ArgumentFormattingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="ConvertToDictArgumentFormattingStrategy.__init__"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToDictArgumentFormattingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_strategy</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_strategy</span> <span class="o">=</span> <span class="n">error_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span></div>
+
+<div class="viewcode-block" id="ConvertToDictArgumentFormattingStrategy.format"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToDictArgumentFormattingStrategy.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">],</span>
+            <span class="n">safe_call</span><span class="p">(</span>
+                <span class="nb">dict</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">error_strategy</span><span class="p">,</span>
+                <span class="n">args</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">]</span>
+            <span class="p">),</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="p">),</span> <span class="n">kwargs</span></div></div>
+
+
+<div class="viewcode-block" id="ConvertDictItemsToSetArgumentFormattingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertDictItemsToSetArgumentFormattingStrategy">[docs]</a><span class="k">class</span> <span class="nc">ConvertDictItemsToSetArgumentFormattingStrategy</span><span class="p">(</span><span class="n">ArgumentFormattingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="ConvertDictItemsToSetArgumentFormattingStrategy.__init__"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertDictItemsToSetArgumentFormattingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_strategy</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_strategy</span> <span class="o">=</span> <span class="n">dict_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span></div>
+
+<div class="viewcode-block" id="ConvertDictItemsToSetArgumentFormattingStrategy.format"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertDictItemsToSetArgumentFormattingStrategy.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">formatted_args</span><span class="p">,</span> <span class="n">formatted_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_strategy</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">],</span>
+            <span class="nb">set</span><span class="p">(</span><span class="n">formatted_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="p">),</span> <span class="n">kwargs</span></div></div>
+
+
+<div class="viewcode-block" id="ConvertToIterArgumentFormattingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToIterArgumentFormattingStrategy">[docs]</a><span class="k">class</span> <span class="nc">ConvertToIterArgumentFormattingStrategy</span><span class="p">(</span><span class="n">ArgumentFormattingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="ConvertToIterArgumentFormattingStrategy.__init__"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToIterArgumentFormattingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span></div>
+
+<div class="viewcode-block" id="ConvertToIterArgumentFormattingStrategy.format"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToIterArgumentFormattingStrategy.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">kwargs</span></div></div>
+
+
+<div class="viewcode-block" id="ConvertToListArgumentFormattingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToListArgumentFormattingStrategy">[docs]</a><span class="k">class</span> <span class="nc">ConvertToListArgumentFormattingStrategy</span><span class="p">(</span><span class="n">ArgumentFormattingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="ConvertToListArgumentFormattingStrategy.__init__"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToListArgumentFormattingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span></div>
+
+<div class="viewcode-block" id="ConvertToListArgumentFormattingStrategy.format"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToListArgumentFormattingStrategy.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">],</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">]),</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="p">),</span> <span class="n">kwargs</span></div></div>
+
+
+<div class="viewcode-block" id="ConvertToSetArgumentFormattingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToSetArgumentFormattingStrategy">[docs]</a><span class="k">class</span> <span class="nc">ConvertToSetArgumentFormattingStrategy</span><span class="p">(</span><span class="n">ArgumentFormattingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="ConvertToSetArgumentFormattingStrategy.__init__"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToSetArgumentFormattingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span></div>
+
+<div class="viewcode-block" id="ConvertToSetArgumentFormattingStrategy.format"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConvertToSetArgumentFormattingStrategy.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">],</span>
+            <span class="nb">set</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">]),</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="p">),</span> <span class="n">kwargs</span></div></div>
+
+
+<div class="viewcode-block" id="SpreadTupleParameterArgumentFormattingStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.SpreadTupleParameterArgumentFormattingStrategy">[docs]</a><span class="k">class</span> <span class="nc">SpreadTupleParameterArgumentFormattingStrategy</span><span class="p">(</span><span class="n">ArgumentFormattingStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="SpreadTupleParameterArgumentFormattingStrategy.__init__"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.SpreadTupleParameterArgumentFormattingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">callable_position</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callable_position</span> <span class="o">=</span> <span class="n">callable_position</span></div>
+
+<div class="viewcode-block" id="SpreadTupleParameterArgumentFormattingStrategy.format"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.SpreadTupleParameterArgumentFormattingStrategy.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">],</span>
+            <span class="k">lambda</span> <span class="o">*</span><span class="n">x</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">](</span>
+                <span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">callable_position</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">callable_position</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">callable_position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
+            <span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="p">),</span> <span class="n">kwargs</span></div></div>
+
+
+<div class="viewcode-block" id="MethodStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.MethodStrategy">[docs]</a><span class="k">class</span> <span class="nc">MethodStrategy</span><span class="p">(</span><span class="n">MethodStrategyInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="MethodStrategy.__init__"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.MethodStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">callable_</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">iterable_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span><span class="p">,</span>
+
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callable</span> <span class="o">=</span> <span class="n">callable_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_strategy</span> <span class="o">=</span> <span class="n">result_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_strategy</span> <span class="o">=</span> <span class="n">return_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterable_binding_strategy</span> <span class="o">=</span> <span class="n">iterable_binding_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">argument_formatting_strategy</span> <span class="o">=</span> <span class="n">argument_formatting_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_process_strategy</span> <span class="o">=</span> <span class="n">pre_process_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_strategy</span> <span class="o">=</span> <span class="n">error_strategy</span></div>
+
+<div class="viewcode-block" id="MethodStrategy.make_method"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.MethodStrategy.make_method">[docs]</a>    <span class="k">def</span> <span class="nf">make_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ret</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pre_process_strategy</span><span class="o">.</span><span class="n">pre_process</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+            <span class="n">formatted_args</span><span class="p">,</span> <span class="n">formatted_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argument_formatting_strategy</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">safe_call</span><span class="p">(</span>
+                <span class="n">partial</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">iterable_binding_strategy</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">callable</span><span class="p">,</span> <span class="n">instance</span><span class="p">),</span>
+                    <span class="o">*</span><span class="n">formatted_args</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">formatted_kwargs</span>
+                <span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_strategy</span>
+            <span class="p">)</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">_iterable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_strategy</span><span class="o">.</span><span class="n">handle_result</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">iterable</span><span class="p">,</span> <span class="n">store</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_strategy</span><span class="o">.</span><span class="n">return_value</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">ret</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">call</span></div></div>
+
+
+<div class="viewcode-block" id="ConcatMethodStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConcatMethodStrategy">[docs]</a><span class="k">class</span> <span class="nc">ConcatMethodStrategy</span><span class="p">(</span><span class="n">MethodStrategy</span><span class="p">):</span>
+<div class="viewcode-block" id="ConcatMethodStrategy.__init__"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ConcatMethodStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">iterable_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">iterable_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">concat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must an iterable type.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="n">Set</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MappingView</span><span class="p">)):</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">concat_seq</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">concat_dict</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">):</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">concat_iter</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">iterable</span>
+
+    <span class="k">def</span> <span class="nf">concat_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">iterable</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">iterable</span>
+
+    <span class="k">def</span> <span class="nf">concat_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">concat_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">operator</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DiffMethodStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.DiffMethodStrategy">[docs]</a><span class="k">class</span> <span class="nc">DiffMethodStrategy</span><span class="p">(</span><span class="n">MethodStrategy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> 
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">argument_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diff</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">argument_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must an iterable type.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="n">Set</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MappingView</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">)):</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">diff_seq</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">diff_dict</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">iterable</span></div>
+
+
+<div class="viewcode-block" id="FlattenMethodStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.FlattenMethodStrategy">[docs]</a><span class="k">class</span> <span class="nc">FlattenMethodStrategy</span><span class="p">(</span><span class="n">MethodStrategy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">argument_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">argument_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
+        <span class="n">flat_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+            <span class="n">flat_list</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">))</span> <span class="k">else</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">flat_list</span></div>
+
+
+<div class="viewcode-block" id="IntersectMethodStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.IntersectMethodStrategy">[docs]</a><span class="k">class</span> <span class="nc">IntersectMethodStrategy</span><span class="p">(</span><span class="n">MethodStrategy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">argument_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intersect</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">argument_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">intersect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must an iterable type.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="n">Set</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MappingView</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">)):</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">intersect_seq</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">intersect_dict</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">iterable</span></div>
+
+
+<div class="viewcode-block" id="SortedAndGroupbyMethodStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.SortedAndGroupbyMethodStrategy">[docs]</a><span class="k">class</span> <span class="nc">SortedAndGroupbyMethodStrategy</span><span class="p">(</span><span class="n">MethodStrategy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">argument_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">group_sort</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">argument_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">group_sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">sorted</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">iterable</span></div>
+
+
+<div class="viewcode-block" id="ChunksMethodStrategy"><a class="viewcode-back" href="../../index.html#iterable_collections.strategy.ChunksMethodStrategy">[docs]</a><span class="k">class</span> <span class="nc">ChunksMethodStrategy</span><span class="p">(</span><span class="n">MethodStrategy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">iterable_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+            <span class="n">result_strategy</span><span class="p">,</span>
+            <span class="n">return_strategy</span><span class="p">,</span>
+            <span class="n">iterable_binding_strategy</span><span class="p">,</span>
+            <span class="n">argument_formatting_strategy</span><span class="p">,</span>
+            <span class="n">pre_process_strategy</span><span class="p">,</span>
+            <span class="n">error_strategy</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">chunks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">iterable</span><span class="p">,</span> <span class="p">(</span><span class="n">Set</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MappingView</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">)):</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">chunks_seq</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">iterable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">chunks_dict</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">iterable</span>
+
+    <span class="k">def</span> <span class="nf">_chunks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterable</span><span class="p">),</span> <span class="n">length</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">iterable</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">chunks_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chunks</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">chunks_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chunks</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">chunks_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chunks</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Allie Fitter.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
