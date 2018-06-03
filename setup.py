@@ -10,6 +10,7 @@ setup(
     author='Allie Fitter',
     author_email='fitterj@gmail.com',
     description='A collections pipeline tool for iterable objects with support for iteration with `dict.items`',
+    keywords=['collection', 'map', 'filter', 'pipeline', 'linq', 'scala'],
     data_files=[(
         'lib/python{}.{}/site-packages/iterable_collections'.format(*sys.version_info[:2]),
         [
