@@ -377,7 +377,7 @@ class FlattenMethodStrategy(MethodStrategy):
     def flatten(self, iterable):
         flat_list = []
         for i in iterable:
-            flat_list += self.flatten(list(i)) if isinstance(i, Iterable) and not isinstance(i, (str, bytes)) else [i]
+            flat_list += self.flatten(list(i)) if isinstance(i, Sequence) and not isinstance(i, (str, bytes)) else [i]
         return flat_list
 
 

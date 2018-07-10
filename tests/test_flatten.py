@@ -21,3 +21,31 @@ class TestFlatten(unittest.TestCase):
     def test_deeply_nested_list(self):
         c = collect([[1, [2, ['foo', 4]], [[5], [b'bar', [7, [8]]]]]]).flatten()
         self.assertEqual(c.iterable, [1, 2, 'foo', 4, 5, b'bar', 7, 8])
+
+    def test_nested_list_of_dicts(self):
+        c = collect([
+            [
+                {'foo': 'bar'},
+                {'foo': 'baz'},
+                {'bar': 'foo'}
+            ],
+            [
+                {'baz': 'foo'}
+            ],
+            [
+                {'foo': 'foo'},
+                {'bar': 'baz'}
+            ],
+            [
+                {'bar': 'bar'}
+            ]
+        ]).flatten()
+        self.assertEqual(c.iterable, [
+            {'foo': 'bar'},
+            {'foo': 'baz'},
+            {'bar': 'foo'},
+            {'baz': 'foo'},
+            {'foo': 'foo'},
+            {'bar': 'baz'},
+            {'bar': 'bar'}
+        ])
