@@ -9,6 +9,7 @@ plugins:
   sonar-python:
     enabled: true
     config:
-      - tests/**
-exclude_patters:
+      test_patterns:
+        - tests/**
+exclude_patterns:
   - "docs/"
