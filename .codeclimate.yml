@@ -11,5 +11,8 @@ plugins:
     config:
       test_patterns:
         - tests/**
+  bandit:
+    enabled: true
 exclude_patterns:
   - "docs/"
+  - "tests/"
