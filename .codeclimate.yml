@@ -1,0 +1,14 @@
+version: "2"
+plugins:
+  pep8:
+    enabled: true
+  radon:
+    enabled: true
+    config:
+      python_version: 3
+  sonar-python:
+    enabled: true
+    config:
+      - tests/**
+exclude_patters:
+  - "docs/"
