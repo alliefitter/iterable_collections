@@ -8,7 +8,7 @@ setup(
     name='iterable_collections',
     version='0.1.6',
     packages=['iterable_collections'],
-    package_data={'iterable_collections': ['*.pyi']},
+    package_data={'iterable_collections': ['py.typed', '*.pyi']},
     license='MIT License',
     author='Allie Fitter',
     author_email='fitterj@gmail.com',
